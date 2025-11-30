@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { RetroComputer } from "./components/RetroComputer";
-import { Globe } from "./components/Globe"; // ← not 3D background, only a 2D vector globe
+import { Globe } from "./components/Globe";
 import { FloatingLabel } from "./components/FloatingLabel";
 import FancyCard from "./components/FancyCard";
 import { OrbitingCircles } from "./components/ui/orbiting-circles";
@@ -9,31 +9,9 @@ import { BenefitCard } from "./components/BenefitCard";
 import { Bot, Smartphone, Code, Glasses } from "lucide-react";
 import { motion } from "framer-motion";
 
-// NO 3D background imports exist in this file, so nothing removed
-
 function App() {
-  const [showNav, setShowNav] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [isTerminalInView, setIsTerminalInView] = useState(false);
   const terminalRef = useRef(null);
-
-  // 🔥 Smooth Hide/Show Navbar Logic
-  useEffect(() => {
-    const handleScroll = () => {
-      const current = window.scrollY;
-
-      if (current > lastScrollY && current > 80) {
-        setShowNav(false); // scrolling down
-      } else {
-        setShowNav(true); // scrolling up
-      }
-
-      setLastScrollY(current);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
 
   // Intersection Observer for terminal
   useEffect(() => {
@@ -49,19 +27,15 @@ function App() {
       }
     );
 
-    if (terminalRef.current) {
-      observer.observe(terminalRef.current);
-    }
+    if (terminalRef.current) observer.observe(terminalRef.current);
 
     return () => {
-      if (terminalRef.current) {
-        observer.unobserve(terminalRef.current);
-      }
+      if (terminalRef.current) observer.unobserve(terminalRef.current);
     };
   }, []);
 
-  // Google Form URL
-  const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSddLVE47rTUG5-QlTYzSynwshvbpM9NTTpIe5gjnZKTW5uCdQ/viewform?usp=header";
+  const googleFormUrl =
+    "https://docs.google.com/forms/d/e/1FAIpQLSddLVE47rTUG5-QlTYzSynwshvbpM9NTTpIe5gjnZKTW5uCdQ/viewform?usp=header";
 
   const handleApplyClick = () => {
     window.open(googleFormUrl, "_blank");
@@ -77,57 +51,43 @@ function App() {
       }}
     >
 
-      {/* 🔥 Auto-Hide Navbar */}
-      <motion.nav
-        initial={{ y: 0, opacity: 1 }}
-        animate={{ y: showNav ? 0 : -90, opacity: showNav ? 1 : 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
+      {/* ⭐ FIXED NAVBAR — NO AUTO HIDE */}
+      <nav
         className="
-          fixed top-12 left-1/2 -translate-x-1/2 z-50 
-          w-[90%] max-w-7xl px-2 
-          flex items-center justify-between
+          fixed top-12 left-1/2 -translate-x-1/2 w-[90%] max-w-7xl z-50 
+          flex justify-between items-center px-10 py-5 
+          rounded-full border border-white/5 backdrop-blur-md
+          bg-transparent
+          shadow-[0_2px_12px_rgba(0,0,0,0.03)]
+          transition-all duration-300
         "
-        style={{ pointerEvents: showNav ? "auto" : "none" }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center gap-4 cursor-pointer"
-        >
-          <div className="w-4 h-4 bg-green-500 rounded-full shadow-[0_0_18px_rgba(0,255,120,0.8)] animate-pulse" />
-          <span className="font-mono uppercase text-[22px] md:text-[24px] tracking-[0.55em] font-extrabold text-gray-900">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/5 to-transparent opacity-5 pointer-events-none"></div>
+
+        {/* LEFT */}
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="w-3.5 h-3.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_6px_rgba(34,197,94,0.6)]"></div>
+          <span className="font-mono text-[22px] md:text-[24px] tracking-[0.55em] font-extrabold text-gray-900">
             DAN LAB
           </span>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="flex items-center gap-12 font-mono text-[14px] uppercase tracking-[0.25em] text-gray-700"
-        >
-          {[
-            { name: "Products", href: "#products" },
-            { name: "Research", href: "#research" },
-            { name: "Join", href: "#contact" },
-          ].map((item) => (
-            <motion.a
-              key={item.name}
-              href={item.href}
-              whileHover={{ y: -2 }}
-              className="relative group"
-            >
-              {item.name}
-              <span className="absolute left-1/2 -translate-x-1/2 -bottom-[4px] h-[2px] w-0 bg-gray-900 rounded-full group-hover:w-full transition-all duration-300" />
-              <span className="absolute inset-0 blur-lg opacity-0 group-hover:opacity-40 transition-all bg-gray-400 duration-300" />
-            </motion.a>
-          ))}
-        </motion.div>
-      </motion.nav>
+        {/* RIGHT */}
+        <div className="flex gap-10 md:gap-14 font-mono text-[14px] uppercase tracking-[0.25em] text-gray-800 relative z-10">
+          <a href="#products" className="hover:text-black transition-all hover:-translate-y-[1px] duration-200">
+            Products
+          </a>
+          <a href="#research" className="hover:text-black transition-all hover:-translate-y-[1px] duration-200">
+            Research
+          </a>
+          <a href="#contact" className="hover:text-black transition-all hover:-translate-y-[1px] duration-200">
+            Join Us
+          </a>
+        </div>
+      </nav>
 
       {/* HERO */}
-      <section className="relative z-10 min-h-screen flex flex-col justify-center items-center py-20 px-4">
+      <section className="relative z-10 min-h-screen flex flex-col justify-center items-center py-38 px-4">
         <div className="mb-8 scale-90 md:scale-100">
           <RetroComputer />
         </div>
@@ -138,12 +98,7 @@ function App() {
           transition={{ duration: 1 }}
           className="flex flex-wrap justify-center gap-8 mt-2 mb-6"
         >
-          {[
-            "(4) active",
-            "(AGI) goal",
-            "(2025) est.",
-            "(100%) future",
-          ].map((txt, i) => (
+          {["(4) active", "(AGI) goal", "(2025) est.", "(100%) future"].map((txt, i) => (
             <p
               key={i}
               className="font-mono text-[12px] md:text-[14px] uppercase tracking-[0.25em] text-gray-700"
@@ -167,9 +122,7 @@ function App() {
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-gray-900 leading-[1.1] text-center tracking-tight">
             building the future <br />
-            <span className="italic text-gray-500 font-light">
-              of automated life
-            </span>
+            <span className="italic text-gray-500 font-light">of automated life</span>
           </h1>
         </motion.div>
       </section>
@@ -180,9 +133,7 @@ function App() {
           <span className="font-mono text-[18px] uppercase border border-gray-300 px-3 py-1.5 rounded-full text-gray-500 bg-white">
             Consumer & Dev Tools
           </span>
-          <h2 className="text-4xl md:text-5xl font-serif mt-8 text-gray-900">
-            product ecosystem
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-serif mt-8 text-gray-900">product ecosystem</h2>
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 place-items-center">
@@ -207,7 +158,6 @@ function App() {
 
       {/* RESEARCH */}
       <section id="research" className="relative z-10 py-32 bg-[#0A0A0A] text-white overflow-hidden">
-
         <div className="text-center mb-20">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -226,12 +176,10 @@ function App() {
           />
         </div>
 
-        {/* texture */}
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03]" />
 
         <div className="container mx-auto px-6 max-w-7xl relative z-10">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-16">
-
             <div className="lg:w-1/2">
               <span className="font-mono text-[18px] uppercase text-blue-400 tracking-widest">
                 Research Division
@@ -252,7 +200,6 @@ function App() {
               <FloatingLabel label="Creative" sublabel="Core B" className="bottom-[25%] right-[15%]" style="dark" delay={0.7} />
               <FloatingLabel label="Synthesis" sublabel="AGI" className="top-[60%] left-[5%]" style="dark" delay={0.9} />
             </div>
-
           </div>
         </div>
       </section>
@@ -260,12 +207,8 @@ function App() {
       {/* METRICS */}
       <section className="relative z-10 py-32 bg-[#F8F8F8] border-t border-gray-200">
         <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-serif text-gray-900 mb-4">
-            performance metrics
-          </h2>
-          <p className="font-mono text-gray-500 text-[22px] tracking-[0.4em] uppercase">
-            measurable impact
-          </p>
+          <h2 className="text-4xl md:text-5xl font-serif text-gray-900 mb-4">performance metrics</h2>
+          <p className="font-mono text-gray-500 text-[22px] tracking-[0.4em] uppercase">measurable impact</p>
         </div>
 
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -287,7 +230,6 @@ function App() {
             <span className="italic text-gray-400">revolution</span>
           </h2>
 
-          {/* Apply Button */}
           <div className="flex justify-center mb-24">
             <button
               onClick={handleApplyClick}
@@ -304,7 +246,6 @@ function App() {
             </button>
           </div>
 
-          {/* Terminal + Orbiting Icons */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
             {/* Terminal */}
@@ -314,7 +255,7 @@ function App() {
               </div>
             </div>
 
-            {/* Orbiting Circles */}
+            {/* Orbiting Icons */}
             <div className="flex justify-center lg:justify-start">
               <div className="relative flex h-[400px] w-full max-w-lg flex-col items-center justify-center overflow-hidden">
                 <OrbitingCircles iconSize={40}>
@@ -322,7 +263,6 @@ function App() {
                   <Icons.gitHub />
                   <Icons.twitter />
                   <Icons.instagram />
-                  <Icons.discord />
                 </OrbitingCircles>
                 <OrbitingCircles iconSize={30} radius={100} reverse speed={2}>
                   <Icons.gitHub />
@@ -392,15 +332,9 @@ function TerminalDemo() {
     }
   }, [currentLineIndex, currentCharIndex, lines]);
 
-  const formatText = (text) => {
-    return text.split('\n').map((line, index) => {
-      if (line.startsWith('> ')) {
-        return (
-          <div key={index} className="text-green-400">
-            {line}
-          </div>
-        );
-      } else if (line.startsWith('✓ ')) {
+  const formatText = (text) =>
+    text.split('\n').map((line, index) => {
+      if (line.startsWith('> ') || line.startsWith('✓ ')) {
         return (
           <div key={index} className="text-green-400">
             {line}
@@ -420,7 +354,6 @@ function TerminalDemo() {
         );
       }
     });
-  };
 
   return (
     <div className="bg-black/90 border border-gray-700 rounded-lg p-6 shadow-2xl backdrop-blur-sm">
@@ -433,8 +366,6 @@ function TerminalDemo() {
 
       <div className="font-mono text-sm space-y-1">
         {formatText(displayText)}
-
-        {/* Cursor */}
         <div className="inline-block w-2 h-4 bg-green-400 animate-pulse" />
       </div>
     </div>
