@@ -1,0 +1,8 @@
+- [x] Remove VantaCustomBackground.tsx (animated 3D background)
+- [x] Remove MeteorDemo.tsx (animated 3D background)
+- [x] Remove Meteors.tsx (used only by MeteorDemo)
+- [x] Remove SocialBar.tsx (unused)
+- [x] Remove firebaseConfig.js (unused)
+- [x] Remove Wave.module.css (unused)
+- [x] Update App.tsx to remove imports and usage of VantaCustomBackground and MeteorDemo
+- [x] Test the app after changes
